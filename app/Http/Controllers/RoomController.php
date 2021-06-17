@@ -21,14 +21,14 @@ class RoomController extends Controller
         $this->opentok = $opentok;
     }
 
-    public function joinRoom()
+    public function joinRoom(string $name)
     {
-        $room = Room::where('name', 'demo-room')->first();
+        $room = Room::where('name', $name)->first();
 
         if (!$room) {
             $session = $this->opentok->createSession();
             $room = new Room([
-                'name' => 'demo-room',
+                'name' => $name,
                 'session_id' => $session->getSessionId()
             ]);
             $room->save();
@@ -37,7 +37,8 @@ class RoomController extends Controller
         return view('room', [
             'apiKey' => $this->key,
             'sessionId' => $room->session_id,
-            'token' => $this->opentok->generateToken($room->session_id)
+            'token' => $this->opentok->generateToken($room->session_id),
+            'roomName' => $name
         ]);
     }
 }
