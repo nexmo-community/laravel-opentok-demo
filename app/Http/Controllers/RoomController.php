@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Room;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use OpenTok\OpenTok;
 
@@ -33,6 +34,16 @@ class RoomController extends Controller
             ]);
             $room->save();
         }
+
+        $this->opentok->signal(
+            $room->session_id,
+            [
+                'type' => 'user-join',
+                'data' => json_encode([
+                    'username' => Auth::user()->name
+                ])
+            ]
+        );
 
         return view('room', [
             'apiKey' => $this->key,

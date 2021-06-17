@@ -5,8 +5,14 @@
         </h2>
     </x-slot>
 
-    <div id="publisher" style="height: 250px; width: 250px;"></div>
-    <div id="subscriber" style="height: 250px; width: 250px;"></div>
+    <div class="grid grid-cols-4 gap-4 p-4">
+      <div class="col-span-3">
+        <div id="publisher" style="height: 250px; width: 250px;"></div>
+        <div id="subscriber" style="height: 250px; width: 250px;"></div>
+      </div>
+      <div id="events" class="bg-white rounded"></div>
+    </div>
+    
 
     <script src="https://static.opentok.com/v2/js/opentok.min.js"></script>
     <script type="text/javascript">
@@ -45,6 +51,15 @@ function initializeSession() {
       handleError(error);
     } else {
       session.publish(publisher, handleError);
+    }
+  });
+
+  session.on('signal', event  => {
+    if (event.type === 'signal:user-join') {
+      const payload = JSON.parse(event.data);
+      const eventDiv = document.createElement('div');
+      eventDiv.innerHTML = payload.username + " has joined";
+      document.getElementById('events').append(eventDiv);
     }
   });
 }
