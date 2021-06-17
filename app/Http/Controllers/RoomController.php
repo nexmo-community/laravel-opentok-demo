@@ -34,6 +34,10 @@ class RoomController extends Controller
             $room->save();
         }
 
-        dd($room->id, $room->session_id);
+        return view('room', [
+            'apiKey' => $this->key,
+            'sessionId' => $room->session_id,
+            'token' => $this->opentok->generateToken($room->session_id)
+        ]);
     }
 }
